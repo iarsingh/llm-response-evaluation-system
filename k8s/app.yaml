@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-response-evaluation-system
+  labels:
+    app: llm-response-evaluation-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-response-evaluation-system
+  template:
+    metadata:
+      labels:
+        app: llm-response-evaluation-system
+    spec:
+      containers:
+        - name: api
+          image: llm-response-evaluation-system:local
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /v1/readyz
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-response-evaluation-system
+spec:
+  selector:
+    app: llm-response-evaluation-system
+  ports:
+    - port: 80
+      targetPort: 8080
